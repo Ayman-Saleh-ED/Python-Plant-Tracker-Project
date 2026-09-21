@@ -1,0 +1,8 @@
+streamlit
+openai
+dotenv
+pandas
+os
+datetime
+requests
+numpy
