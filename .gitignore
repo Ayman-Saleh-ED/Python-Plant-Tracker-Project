@@ -1,3 +1,8 @@
 .env
 *.csv
-    
+__pycache__/
+.vscode/
+photos/
+care_data.csv
+growth_data.csv
+plants.csv
