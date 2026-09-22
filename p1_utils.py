@@ -262,7 +262,7 @@ import requests
 
 def fetch_plant_info(species_name):
     url = "https://trefle.io/api/v1/plants/search"
-    params = {"token": st.secrets.get("TREFLE_TOKEN", os.getenv("TREFLE_TOKEN")), "q": species_name}    
+    params = {"token": st.secrets.get("TREFLE_TOKEN", os.getenv("TREFLE_TOKEN")), "q": species_name}
     try:
         response = requests.get(url, params=params)
         data = response.json()
@@ -272,11 +272,25 @@ def fetch_plant_info(species_name):
             main_species = plant.get("main_species", {})
             growth = main_species.get("growth", {}) if main_species else {}
             
+            common_name = plant.get("common_name")
+            family = plant.get("family_common_name")
             light = growth.get("light")
             watering = growth.get("atmospheric_humidity")
             
-            care_tip = f"Sunlight Requirements: {light if light else 'Unknown'}. "
-            care_tip += f"Watering Frequency: {watering if watering else 'Unknown'}."
+            tip_parts = []
+            if common_name:
+                tip_parts.append(f"Common name: {common_name}.")
+            if family:
+                tip_parts.append(f"Family: {family}.")
+            if light:
+                tip_parts.append(f"Light requirement (1-10 scale): {light}.")
+            if watering:
+                tip_parts.append(f"Humidity preference (1-10 scale): {watering}.")
+            
+            if not tip_parts:
+                tip_parts.append("Species matched, but no detailed care data available — fill in manually below.")
+            
+            care_tip = " ".join(tip_parts)
             
             return {
                 "watering": watering if watering else "Unknown",
