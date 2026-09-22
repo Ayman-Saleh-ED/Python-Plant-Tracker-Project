@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import os
 import datetime as dt
@@ -7,9 +8,11 @@ from openai import OpenAI
 
 load_dotenv()
 
+open_api_key = st.secrets.get("OPENROUTER_API_KEY", os.getenv("OPENROUTER_API_KEY"))
+
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")
+    api_key=open_api_key
 )
 
 
@@ -229,13 +232,13 @@ def diagnose_symptoms(selected_symptoms):
    
 
 
-from openai import OpenAI, api_key
 
 # 1. Initialize the client (API key + Base URL) 🔑
-client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")
-)
+# client = OpenAI(
+#     base_url="https://openrouter.ai/api/v1",
+#     api_key=os.getenv("OPENROUTER_API_KEY")
+# )
+
 
 def get_llm_response(prompt):
     completion = client.chat.completions.create(
@@ -259,7 +262,7 @@ import requests
 
 def fetch_plant_info(species_name):
     url = "https://trefle.io/api/v1/plants/search"
-    params = {"token": os.getenv("TREFLE_TOKEN"), "q": species_name}
+    params = {"token": st.secrets.get("TREFLE_TOKEN", os.getenv("TREFLE_TOKEN")), "q": species_name}    
     try:
         response = requests.get(url, params=params)
         data = response.json()
